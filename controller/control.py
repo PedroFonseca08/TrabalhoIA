@@ -1,4 +1,6 @@
-from view.sense import speech_to_text
+from view.sense import criar_interface
+
 
 def runRobot():
-  speech_to_text()
+  criar_interface()
+  
