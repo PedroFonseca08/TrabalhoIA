@@ -5,9 +5,40 @@ import re
 import tkinter as tk
 from tkinter import Listbox, Entry, Button, Scrollbar
 import threading
+import datetime
+import schedule
 
 recognizer = sr.Recognizer()
 listaHorarios = []
+
+def disparar_alarme(hora_alarme):
+    print(f"Alarme disparado às {hora_alarme.strftime('%H:%M')}")
+
+
+def definir_alarme(hora_alarme):
+  try:
+      # Divida a hora e os minutos da string fornecida
+      hora, minutos = map(int, hora_alarme.split(':'))
+      
+      # Obtenha a data e hora atual
+      agora = datetime.datetime.now()
+      
+      # Crie um objeto datetime com a data atual e a hora fornecida
+      hora_alarme = agora.replace(hour=hora, minute=minutos, second=0, microsecond=0)
+      
+      # Calcule a diferença entre o alarme e a hora atual
+      diferenca = hora_alarme - agora
+      
+      # Garanta que a diferença seja positiva
+      if diferenca.total_seconds() < 0:
+          # Se o alarme estiver definido para o próximo dia
+          hora_alarme += datetime.timedelta(days=1)
+      
+      # Agende o alarme com o schedule
+      schedule.every().day.at(hora_alarme.strftime("%H:%M")).do(disparar_alarme, hora_alarme=hora_alarme)
+  
+  except ValueError:
+      print("Formato de hora inválido. Use o formato '00:00'.")
 
 def atualizar_lista():
     lista_box.delete(0, tk.END)  # Limpa a lista atual
@@ -18,6 +49,7 @@ def adicionar_horario():
     novo_horario = horario_entry.get()
     if novo_horario:
         listaHorarios.append(novo_horario)
+        definir_alarme(novo_horario)
         atualizar_lista()
 
 def remover_horario():
@@ -46,6 +78,11 @@ def find_horario(arrText):
     
     # Retorna a lista de horários encontrados
     return horario
+
+def loopAlarme():
+  while True:
+      schedule.run_pending()
+      time.sleep(1)
 
 def criar_interface():
     global horario_entry 
@@ -87,6 +124,10 @@ def criar_interface():
     alarme_thread.daemon = True  # A thread será encerrada quando a janela for fechada
     alarme_thread.start()
 
+    loopAlarme_thread = threading.Thread(target=loopAlarme)
+    loopAlarme_thread.daemon = True
+    loopAlarme_thread.start()
+
     root.mainloop()
     
 def text_to_speech(text):
@@ -105,6 +146,7 @@ def speech_to_text():
 
   # Capture audio from the microphone
   with sr.Microphone() as source:
+    arrText = ""
     print("Fale algo...")
     recognizer.adjust_for_ambient_noise(source)  # Adjust for noise
     try:
@@ -126,23 +168,28 @@ def speech_to_text():
 def horario_alarme():
   sent = 0
   while sent != 1:
-    arrText = speech_to_text()
-    print ("*", arrText)
-    if "beto" in arrText:
+    arrTextBeto = speech_to_text()
+    print ("*", arrTextBeto)
+    if "beto" in arrTextBeto:
       sent = 1
-    elif "Beto" in arrText:
+    elif "Beto" in arrTextBeto:
       sent = 1
   
   sent = 0
   text_to_speech("Qual o horário do alarme?")
   while sent != 1:
-    arrText = speech_to_text()
-    horario = find_horario(arrText)
+    arrTextHoras = speech_to_text()
+    horario = find_horario(arrTextHoras)
     if horario:
       print("Horário identificado:", horario)
       listaHorarios.append(horario)
       atualizar_lista()
       sent = 1
+  definir_alarme(horario)
+  text_to_speech("Grave seu lembrete")
+  lembrete = speech_to_text()
+  print("Lembrete gravado:", lembrete)
+
   
 
 
