@@ -11,11 +11,10 @@ import schedule
 recognizer = sr.Recognizer()
 listaHorarios = []
 
-def disparar_alarme(hora_alarme):
-    print(f"Alarme disparado às {hora_alarme.strftime('%H:%M')}")
+def disparar_alarme(lembrete):
+    text_to_speech(lembrete)
 
-
-def definir_alarme(hora_alarme):
+def definir_alarme(hora_alarme, lembrete):
   try:
       # Divida a hora e os minutos da string fornecida
       hora, minutos = map(int, hora_alarme.split(':'))
@@ -35,7 +34,7 @@ def definir_alarme(hora_alarme):
           hora_alarme += datetime.timedelta(days=1)
       
       # Agende o alarme com o schedule
-      schedule.every().day.at(hora_alarme.strftime("%H:%M")).do(disparar_alarme, hora_alarme=hora_alarme)
+      schedule.every().day.at(hora_alarme.strftime("%H:%M")).do(disparar_alarme, lembrete=lembrete)
   
   except ValueError:
       print("Formato de hora inválido. Use o formato '00:00'.")
@@ -44,19 +43,6 @@ def atualizar_lista():
     lista_box.delete(0, tk.END)  # Limpa a lista atual
     for horario in listaHorarios:
         lista_box.insert(tk.END, horario)
-
-def adicionar_horario():
-    novo_horario = horario_entry.get()
-    if novo_horario:
-        listaHorarios.append(novo_horario)
-        definir_alarme(novo_horario)
-        atualizar_lista()
-
-def remover_horario():
-    selected_index = lista_box.curselection()
-    if selected_index:
-        listaHorarios.pop(selected_index[0])
-        atualizar_lista()
 
 def find_horario(arrText):
     # Padrão de regex para encontrar horários no formato HH:MM
@@ -103,18 +89,6 @@ def criar_interface():
 
     atualizar_lista()  # Preenche a lista inicialmente
 
-    # Entrada de texto para adicionar horários
-    horario_entry = Entry(root)
-    horario_entry.pack(padx=10, pady=5)
-
-    # Botão para adicionar horários
-    adicionar_button = Button(root, text="Adicionar Horário", command=adicionar_horario)
-    adicionar_button.pack(padx=10, pady=5)
-
-    # Botão para remover horários
-    remover_button = Button(root, text="Remover Horário", command=remover_horario)
-    remover_button.pack(padx=10, pady=5)
-
     # Botão para fechar a janela
     fechar_button = Button(root, text="Fechar", command=root.quit)
     fechar_button.pack(padx=10, pady=10)
@@ -142,53 +116,63 @@ def text_to_speech(text):
     engine.say(text)
     engine.runAndWait()
 
-def speech_to_text():
+def speech_to_text(flag):
 
   # Capture audio from the microphone
   with sr.Microphone() as source:
-    arrText = ""
-    print("Fale algo...")
+    text = ""
+    print("*")
     recognizer.adjust_for_ambient_noise(source)  # Adjust for noise
     try:
-      audio = recognizer.listen(source, phrase_time_limit = 3)
+      if flag == 1:
+        audio = recognizer.listen(source, phrase_time_limit = 3)
+      else:
+         audio = recognizer.listen(source)
     except sr.WaitTimeoutError:
       print("Tempo limite excedido. Não foi possível detectar fala dentro do limite de tempo.")
 
     try:
       # Recognize the speech using Google Web Speech API
       text = recognizer.recognize_google(audio, language='pt-BR')
-      arrText = text.split(' ')
-      print("Você falou:", arrText)
+      print("Você falou:", text)
     except sr.UnknownValueError:
       print("Sorry, I couldn't understand the audio.")
     except sr.RequestError as e:
       print("Sorry, an error occurred. Could not request results; {0}".format(e))
-  return arrText
+  return text
 
 def horario_alarme():
-  sent = 0
-  while sent != 1:
-    arrTextBeto = speech_to_text()
-    print ("*", arrTextBeto)
-    if "beto" in arrTextBeto:
-      sent = 1
-    elif "Beto" in arrTextBeto:
-      sent = 1
   
-  sent = 0
-  text_to_speech("Qual o horário do alarme?")
-  while sent != 1:
-    arrTextHoras = speech_to_text()
-    horario = find_horario(arrTextHoras)
-    if horario:
-      print("Horário identificado:", horario)
-      listaHorarios.append(horario)
-      atualizar_lista()
-      sent = 1
-  definir_alarme(horario)
-  text_to_speech("Grave seu lembrete")
-  lembrete = speech_to_text()
-  print("Lembrete gravado:", lembrete)
+  while True:
+    sent = 0
+    while sent != 1:
+      print ("Nosso robô chama Beto")
+      print ("Fale algo:")
+      arrTextBeto = speech_to_text(1)
+      arrTextBeto = arrTextBeto.split(' ')
+      if "beto" in arrTextBeto:
+        sent = 1
+      elif "Beto" in arrTextBeto:
+        sent = 1
+    
+    sent = 0
+    text_to_speech("Qual o horário do alarme?")
+    print ("Fale o horário:")
+    while sent != 1:
+      arrTextHoras = speech_to_text(0)
+      arrTextHoras = arrTextHoras.split(' ')
+      horario = find_horario(arrTextHoras)
+      if horario:
+        print("Horário identificado:", horario)
+        listaHorarios.append(horario)
+        atualizar_lista()
+        sent = 1
+    text_to_speech("Grave seu lembrete")
+    print ("Fale o lembrete:")
+    lembrete = speech_to_text(0)
+    print("Lembrete gravado:", lembrete)
+    definir_alarme(horario, lembrete)
+    
 
   
 
