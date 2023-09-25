@@ -8,6 +8,7 @@ import threading
 import datetime
 import schedule
 from playsound import playsound
+from view.eleven_labs import tts_elevenlabs
 
 recognizer = sr.Recognizer()
 listaHorarios = []
@@ -15,7 +16,7 @@ listaHorarios = []
 def disparar_alarme(lembrete, horarioAux):
     playsound(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\view\batAlarme.mp3')
     time.sleep(0.25)
-    text_to_speech(lembrete)
+    tts_elevenlabs(lembrete)
     print(horarioAux)
     if horarioAux in listaHorarios:
        listaHorarios.remove(horarioAux)
@@ -164,7 +165,7 @@ def horario_alarme():
         sent = 1
     
     sent = 0
-    text_to_speech("Qual o horário do alarme?")
+    tts_elevenlabs("Qual o horário do alarme?")
     print ("Fale o horário:")
 
     while sent != 1:
@@ -175,7 +176,7 @@ def horario_alarme():
         print("Horário identificado:", horario)
         sent = 1
 
-    text_to_speech("Grave seu lembrete")
+    tts_elevenlabs("Grave seu lembrete")
     print ("Fale o lembrete:")
     lembrete = speech_to_text(0)
     
