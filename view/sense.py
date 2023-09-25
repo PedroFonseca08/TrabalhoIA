@@ -15,7 +15,6 @@ listaHorarios = []
 
 def disparar_alarme(lembrete, horarioAux):
     playsound(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\view\batAlarme.mp3')
-    time.sleep(0.25)
     tts_elevenlabs(lembrete)
     print(horarioAux)
     if horarioAux in listaHorarios:
@@ -111,18 +110,6 @@ def criar_interface():
     loopAlarme_thread.start()
 
     root.mainloop()
-    
-def text_to_speech(text):
-    # Inicialize o mecanismo de síntese de voz
-    engine = pyttsx3.init()
-  
-    # Defina a voz que você deseja usar (opcional)
-    voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[0].id)  # Escolhe a primeira voz disponível
-
-    # Faça o sistema falar a frase
-    engine.say(text)
-    engine.runAndWait()
 
 def speech_to_text(flag):
 
