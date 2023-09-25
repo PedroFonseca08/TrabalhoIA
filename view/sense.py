@@ -77,39 +77,53 @@ def loopAlarme():
       schedule.run_pending()
       time.sleep(1)
 
+def ajustar_texto(texto, largura):
+    texto_quebrado = ""
+    linha_atual = ""
+    for palavra in texto.split():
+        if len(linha_atual) + len(palavra) <= largura:
+            linha_atual += palavra + " "
+        else:
+            texto_quebrado += linha_atual + "\n"
+            linha_atual = palavra + " "
+    texto_quebrado += linha_atual
+    return texto_quebrado
+
 def criar_interface():
-    global horario_entry 
-    global lista_box
+  global horario_entry 
+  global lista_box
 
-    root = tk.Tk()
-    root.title("Horários")
+  root = tk.Tk()
+  root.title("Horários")
+  root.geometry("400x500")  # Aumenta a altura da janela
+  root.iconbitmap(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\view\icone.ico')
 
-    # Criação da lista de horários
-    lista_frame = tk.Frame(root)
-    lista_frame.pack(padx=10, pady=10)
+  # Criação da lista de horários
+  lista_frame = tk.Frame(root)
+  lista_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)  # Preenche o espaço disponível
 
-    scrollbar = Scrollbar(lista_frame, orient=tk.VERTICAL)
-    lista_box = Listbox(lista_frame, selectmode=tk.SINGLE, yscrollcommand=scrollbar.set)
-    scrollbar.config(command=lista_box.yview)
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-    lista_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+  scrollbar = tk.Scrollbar(lista_frame, orient=tk.VERTICAL)
+  lista_box = tk.Listbox(lista_frame, selectmode=tk.SINGLE, yscrollcommand=scrollbar.set, font=("Arial", 12))
+  scrollbar.config(command=lista_box.yview)
+  scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+  lista_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-    atualizar_lista()  # Preenche a lista inicialmente
+  atualizar_lista()  # Preenche a lista inicialmente
 
-    # Botão para fechar a janela
-    fechar_button = Button(root, text="Fechar", command=root.quit)
-    fechar_button.pack(padx=10, pady=10)
+  # Botão para fechar a janela
+  fechar_button = tk.Button(root, text="Fechar", command=root.quit)
+  fechar_button.pack(padx=10, pady=10)
 
-    # Cria e inicia a thread para adicionar horários
-    alarme_thread = threading.Thread(target=horario_alarme)
-    alarme_thread.daemon = True  # A thread será encerrada quando a janela for fechada
-    alarme_thread.start()
+  # Cria e inicia a thread para adicionar horários
+  alarme_thread = threading.Thread(target=horario_alarme)
+  alarme_thread.daemon = True  # A thread será encerrada quando a janela for fechada
+  alarme_thread.start()
 
-    loopAlarme_thread = threading.Thread(target=loopAlarme)
-    loopAlarme_thread.daemon = True
-    loopAlarme_thread.start()
+  loopAlarme_thread = threading.Thread(target=loopAlarme)
+  loopAlarme_thread.daemon = True
+  loopAlarme_thread.start()
 
-    root.mainloop()
+  root.mainloop()
 
 def speech_to_text(flag):
 
