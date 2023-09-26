@@ -1,15 +1,12 @@
-import tkinter as tk
-import threading
 import datetime
 import schedule
 from playsound import playsound
 from view.eleven_labs import tts_elevenlabs
 from controller.find_horario import find_horario
 from view.speech_to_text import speech_to_text
-from controller.loop_alarme import loop_alarme
+from view.interface import atualizar_lista
+from controller.variavelglobal import listaHorarios
 
-
-listaHorarios = []
 
 def disparar_alarme(lembrete, horarioAux):
     playsound(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\model\batAlarme.mp3')
@@ -43,44 +40,6 @@ def definir_alarme(hora_alarme, lembrete, horarioAux):
   except ValueError:
       print("Formato de hora inválido. Use o formato '00:00'.")
 
-def atualizar_lista():
-    lista_box.delete(0, tk.END)  # Limpa a lista atual
-    for horario in listaHorarios:
-        lista_box.insert(tk.END, horario)
-
-def criar_interface():
-  global horario_entry 
-  global lista_box
-
-  root = tk.Tk()
-  root.title("Horários")
-  root.geometry("400x500")  # Aumenta a altura da janela
-  root.iconbitmap(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\model\icone.ico')
-
-  # Criação da lista de horários
-  lista_frame = tk.Frame(root)
-  lista_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)  # Preenche o espaço disponível
-
-  scrollbar = tk.Scrollbar(lista_frame, orient=tk.VERTICAL)
-  lista_box = tk.Listbox(lista_frame, selectmode=tk.SINGLE, yscrollcommand=scrollbar.set, font=("Arial", 12))
-  scrollbar.config(command=lista_box.yview)
-  scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-  lista_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-  # Botão para fechar a janela
-  fechar_button = tk.Button(root, text="Fechar", command=root.quit)
-  fechar_button.pack(padx=10, pady=10)
-
-  # Cria e inicia a thread para adicionar horários
-  alarme_thread = threading.Thread(target=horario_alarme)
-  alarme_thread.daemon = True  # A thread será encerrada quando a janela for fechada
-  alarme_thread.start()
-
-  loopAlarme_thread = threading.Thread(target=loop_alarme)
-  loopAlarme_thread.daemon = True
-  loopAlarme_thread.start()
-
-  root.mainloop()
 
 def horario_alarme():
   
