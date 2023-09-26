@@ -19,7 +19,7 @@ O projeto da disciplina de Inteligência Artificial consiste em um robô social 
 
 ## Bibliotecas e APIs utilizadas
 
-Durante a implementação, foram utilizadas diferentes bibliotecas e APIs diferentes que requerem instalação para garantir o funcionamento correto do nosso robô social. Portanto, para fazer a instalação delas:
+Durante a implementação, foram utilizadas diferentes bibliotecas e APIs que requerem instalação para garantir o funcionamento correto do nosso robô social. Portanto, para fazer a instalação delas:
 
 - requests:
 > pip install requests
