@@ -1,9 +1,9 @@
-from view.eleven_labs import tts_elevenlabs
+from view.tts import tts_elevenlabs
 from controller.find_horario import find_horario
 from controller.definir_alarme import definir_alarme
-from view.speech_to_text import speech_to_text
+from view.stt import speech_to_text
 from view.interface import atualizar_lista
-from controller.variavelglobal import listaHorarios
+from controller.variavel_global import listaHorarios
 
 def horario_alarme():
   
@@ -38,11 +38,6 @@ def horario_alarme():
     print("Lembrete gravado:", lembrete)
     horarioAux = horario + " - " + lembrete
 
-    definir_alarme(horario, lembrete,horarioAux)
+    definir_alarme(horario, lembrete, horarioAux)
     listaHorarios.append(horarioAux)
     atualizar_lista()
-    
-
-  
-
-

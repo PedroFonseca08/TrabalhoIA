@@ -1,5 +1,6 @@
 import tkinter as tk
-from controller.variavelglobal import listaHorarios
+from controller.variavel_global import listaHorarios
+from view.tts import tts_elevenlabs
 
 def atualizar_lista():
     lista_box.delete(0, tk.END)  # Limpa a lista atual
@@ -10,10 +11,13 @@ def criar_interface():
   global horario_entry 
   global lista_box
 
+  tts_elevenlabs("Olá. Eu sou o Beto. Para configurar um alarme é só me chamar.")
+
   root = tk.Tk()
   root.title("Horários")
   root.geometry("400x500")  # Aumenta a altura da janela
-  root.iconbitmap(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\model\icone.ico')
+  #root.iconbitmap(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\model\icone.ico')
+  #root.iconbitmap(r'/home/lucasmalachias/l/CC/IA/TrabalhoIA/backup/src/model/icone.ico')
 
   # Criação da lista de horários
   lista_frame = tk.Frame(root)
