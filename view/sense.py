@@ -9,8 +9,8 @@ def horario_alarme():
   
   while True:
     sent = 0
+    print ("Nosso robô chama Beto")
     while sent != 1:
-      print ("Nosso robô chama Beto")
       print ("Fale algo:")
       arrTextBeto = speech_to_text(1)
       arrTextBeto = arrTextBeto.split(' ')
@@ -41,7 +41,7 @@ def horario_alarme():
     definir_alarme(horario, lembrete,horarioAux)
     listaHorarios.append(horarioAux)
     atualizar_lista()
-    
+    tts_elevenlabs("Alarme definido!")
 
   
 

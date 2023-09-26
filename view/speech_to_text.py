@@ -7,7 +7,6 @@ def speech_to_text(flag):
   # Capture audio from the microphone
   with sr.Microphone() as source:
     text = ""
-    print("*")
     recognizer.adjust_for_ambient_noise(source)  # Adjust for noise
     try:
       if flag == 1:
@@ -22,7 +21,7 @@ def speech_to_text(flag):
       text = recognizer.recognize_google(audio, language='pt-BR')
       print("Você falou:", text)
     except sr.UnknownValueError:
-      print("Sorry, I couldn't understand the audio.")
+      print("Eu... Eu não entendi o que você falou")
     except sr.RequestError as e:
       print("Sorry, an error occurred. Could not request results; {0}".format(e))
   return text
