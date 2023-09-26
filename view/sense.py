@@ -1,20 +1,18 @@
-import speech_recognition as sr
-import pyttsx3
-import time
-import re
 import tkinter as tk
-from tkinter import Listbox, Entry, Button, Scrollbar
 import threading
 import datetime
 import schedule
 from playsound import playsound
 from view.eleven_labs import tts_elevenlabs
+from controller.find_horario import find_horario
+from view.speech_to_text import speech_to_text
+from controller.loop_alarme import loop_alarme
 
-recognizer = sr.Recognizer()
+
 listaHorarios = []
 
 def disparar_alarme(lembrete, horarioAux):
-    playsound(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\view\batAlarme.mp3')
+    playsound(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\model\batAlarme.mp3')
     tts_elevenlabs(lembrete)
     print(horarioAux)
     if horarioAux in listaHorarios:
@@ -23,7 +21,6 @@ def disparar_alarme(lembrete, horarioAux):
 
 def definir_alarme(hora_alarme, lembrete, horarioAux):
   try:
-      horario = hora_alarme
       # Divida a hora e os minutos da string fornecida
       hora, minutos = map(int, hora_alarme.split(':'))
       
@@ -51,44 +48,6 @@ def atualizar_lista():
     for horario in listaHorarios:
         lista_box.insert(tk.END, horario)
 
-def find_horario(arrText):
-    # Padrão de regex para encontrar horários no formato HH:MM
-    padrao_horario1 = r'\d{2}:\d{2}'
-    padrao_horario2 = r'\d{1}:\d{2}'
-
-    horario = ""
-
-    # Procura por correspondências em cada elemento da lista usando regex
-    for palavra in arrText:
-        correspondencias = re.findall(padrao_horario1, palavra)
-        if correspondencias:
-            horario = correspondencias[0]
-            break
-        correspondencias = re.findall(padrao_horario2, palavra)
-        if correspondencias:
-            horario = correspondencias[0]
-            break
-    
-    # Retorna a lista de horários encontrados
-    return horario
-
-def loopAlarme():
-  while True:
-      schedule.run_pending()
-      time.sleep(1)
-
-def ajustar_texto(texto, largura):
-    texto_quebrado = ""
-    linha_atual = ""
-    for palavra in texto.split():
-        if len(linha_atual) + len(palavra) <= largura:
-            linha_atual += palavra + " "
-        else:
-            texto_quebrado += linha_atual + "\n"
-            linha_atual = palavra + " "
-    texto_quebrado += linha_atual
-    return texto_quebrado
-
 def criar_interface():
   global horario_entry 
   global lista_box
@@ -96,7 +55,7 @@ def criar_interface():
   root = tk.Tk()
   root.title("Horários")
   root.geometry("400x500")  # Aumenta a altura da janela
-  root.iconbitmap(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\view\icone.ico')
+  root.iconbitmap(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\model\icone.ico')
 
   # Criação da lista de horários
   lista_frame = tk.Frame(root)
@@ -108,8 +67,6 @@ def criar_interface():
   scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
   lista_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-  atualizar_lista()  # Preenche a lista inicialmente
-
   # Botão para fechar a janela
   fechar_button = tk.Button(root, text="Fechar", command=root.quit)
   fechar_button.pack(padx=10, pady=10)
@@ -119,40 +76,14 @@ def criar_interface():
   alarme_thread.daemon = True  # A thread será encerrada quando a janela for fechada
   alarme_thread.start()
 
-  loopAlarme_thread = threading.Thread(target=loopAlarme)
+  loopAlarme_thread = threading.Thread(target=loop_alarme)
   loopAlarme_thread.daemon = True
   loopAlarme_thread.start()
 
   root.mainloop()
 
-def speech_to_text(flag):
-
-  # Capture audio from the microphone
-  with sr.Microphone() as source:
-    text = ""
-    print("*")
-    recognizer.adjust_for_ambient_noise(source)  # Adjust for noise
-    try:
-      if flag == 1:
-        audio = recognizer.listen(source, phrase_time_limit = 3)
-      else:
-         audio = recognizer.listen(source)
-    except sr.WaitTimeoutError:
-      print("Tempo limite excedido. Não foi possível detectar fala dentro do limite de tempo.")
-
-    try:
-      # Recognize the speech using Google Web Speech API
-      text = recognizer.recognize_google(audio, language='pt-BR')
-      print("Você falou:", text)
-    except sr.UnknownValueError:
-      print("Sorry, I couldn't understand the audio.")
-    except sr.RequestError as e:
-      print("Sorry, an error occurred. Could not request results; {0}".format(e))
-  return text
-
 def horario_alarme():
   
-  horarioAux = ""
   while True:
     sent = 0
     while sent != 1:
