@@ -4,10 +4,10 @@ recognizer = sr.Recognizer()
 
 def speech_to_text(flag):
 
-  # Capture audio from the microphone
+  # Captura o áudio do microfone
   with sr.Microphone() as source:
     text = ""
-    recognizer.adjust_for_ambient_noise(source)  # Adjust for noise
+    recognizer.adjust_for_ambient_noise(source)  # Ajusta o barulho do ambiente
     try:
       if flag == 1:
         audio = recognizer.listen(source, phrase_time_limit = 3)
@@ -23,5 +23,5 @@ def speech_to_text(flag):
     except sr.UnknownValueError:
       print("Eu... Eu não entendi o que você falou")
     except sr.RequestError as e:
-      print("Sorry, an error occurred. Could not request results; {0}".format(e))
+      print("Desculpe, um erro ocorreu. Não foi possível solicitar resultados.; {0}".format(e))
   return text
