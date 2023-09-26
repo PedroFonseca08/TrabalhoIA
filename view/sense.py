@@ -1,45 +1,9 @@
-import datetime
-import schedule
-from playsound import playsound
 from view.eleven_labs import tts_elevenlabs
 from controller.find_horario import find_horario
+from controller.definir_alarme import definir_alarme
 from view.speech_to_text import speech_to_text
 from view.interface import atualizar_lista
 from controller.variavelglobal import listaHorarios
-
-
-def disparar_alarme(lembrete, horarioAux):
-    playsound(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\model\batAlarme.mp3')
-    tts_elevenlabs(lembrete)
-    print(horarioAux)
-    if horarioAux in listaHorarios:
-       listaHorarios.remove(horarioAux)
-       atualizar_lista()
-
-def definir_alarme(hora_alarme, lembrete, horarioAux):
-  try:
-      # Divida a hora e os minutos da string fornecida
-      hora, minutos = map(int, hora_alarme.split(':'))
-      
-      # Obtenha a data e hora atual
-      agora = datetime.datetime.now()
-      
-      # Crie um objeto datetime com a data atual e a hora fornecida
-      hora_alarme = agora.replace(hour=hora, minute=minutos, second=0, microsecond=0)
-      
-      # Calcule a diferença entre o alarme e a hora atual
-      diferenca = hora_alarme - agora
-      
-      # Garanta que a diferença seja positiva
-      if diferenca.total_seconds() < 0:
-          # Se o alarme estiver definido para o próximo dia
-          hora_alarme += datetime.timedelta(days=1)
-      
-      # Agende o alarme com o schedule
-      schedule.every().day.at(hora_alarme.strftime("%H:%M")).do(disparar_alarme, lembrete=lembrete, horarioAux=horarioAux)
-  except ValueError:
-      print("Formato de hora inválido. Use o formato '00:00'.")
-
 
 def horario_alarme():
   
