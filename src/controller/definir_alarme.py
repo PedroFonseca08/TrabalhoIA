@@ -1,7 +1,8 @@
 import datetime
 import schedule
-from view.disparar_alarme import disparar_alarme
+from view.act_disparar_alarme import disparar_alarme
 
+# Função responsável por definir o alarme
 def definir_alarme(hora_alarme, lembrete, horarioAux):
   try:
       # Divida a hora e os minutos da string fornecida

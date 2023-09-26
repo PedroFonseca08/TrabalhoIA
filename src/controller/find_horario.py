@@ -1,5 +1,6 @@
 import re
 
+# Função responsável por verificar se existe alguma hora na fala do usuário
 def find_horario(arrText):
     # Padrão de regex para encontrar horários no formato HH:MM
     padrao_horario1 = r'\d{2}:\d{2}'
