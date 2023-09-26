@@ -6,7 +6,7 @@ from view.interface import atualizar_lista
 # Função responsável por emitir um bat-alarme e o lembrete
 def disparar_alarme(lembrete, horarioAux):
     try:
-        playsound(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\model\batAlarme.mp3')
+        playsound(r'C:\Users\pedro\OneDrive\Área de Trabalho\TrabalhoIA\src\model\batAlarme.mp3')
         # playsound(r'/home/lucasmalachias/l/CC/IA/TrabalhoIA/backup/src/model/batAlarme.mp3')
     except:
         print("Não foi possível ativar o Bat-Alarme")
